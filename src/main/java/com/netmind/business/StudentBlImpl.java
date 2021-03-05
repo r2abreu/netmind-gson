@@ -48,13 +48,15 @@ public class StudentBlImpl implements StudentBl {
 	}
 
 	private int calculateAge(LocalDate dateOfBirth) {
-
 		Period age = Period.between(dateOfBirth, LocalDate.now());
 		return age.getYears();
 	}
 
 	@Override
 	public boolean addToJsonFile(Student student) throws IOException {
-		return false;
+		StudentDao studentDao = new StudentDaoImpl();
+		String fileName = FileManagerDao.getFileName("json");
+
+		return studentDao.addToJsonFile(student);
 	}
 }
