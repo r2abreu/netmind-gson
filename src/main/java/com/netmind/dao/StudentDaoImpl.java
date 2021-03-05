@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.netmind.dao.contracts.StudentDao;
 import com.netmind.model.Student;
 
@@ -30,7 +32,7 @@ public class StudentDaoImpl implements StudentDao {
 	public boolean addStudentToFile(Student student) throws IOException {
 		logger.info("addStudentToFile method called");
 		try (FileWriter fileWriter = new FileWriter(
-				FileManagerDao.getFileName(), true);
+				FileManagerDao.getFileName("txt"), true);
 				BufferedWriter bufferWriter = new BufferedWriter(fileWriter)) {
 			bufferWriter.write(student.toTxtFile());
 			bufferWriter.write(System.lineSeparator());
@@ -43,8 +45,20 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public boolean addToJsonFile(Student student) {
-		// TODO Auto-generated method stub
-		return false;
+		logger.info("addToJsonFile method called");
+
+		Gson gson = new Gson();
+		try {
+			gson.toJson(student,
+					new FileWriter(FileManagerDao.getFileName("json")));
+		} catch (JsonIOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 }

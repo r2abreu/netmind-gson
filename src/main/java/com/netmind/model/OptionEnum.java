@@ -9,7 +9,7 @@ public enum OptionEnum {
 		this.value = value;
 	}
 
-	public static OptionEnum getEnumFromValue(int value) {
+	public static OptionEnum fromValue(int value) {
 		for (OptionEnum my : OptionEnum.values()) {
 			if (my.value == value) {
 				return my;
@@ -19,7 +19,7 @@ public enum OptionEnum {
 		return null;
 	}
 
-	public int getValue() {
+	public int value() {
 		return value;
 	}
 

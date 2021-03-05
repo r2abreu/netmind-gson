@@ -1,5 +1,5 @@
 /**
- * Class name: Student Console.
+  * Class name: Student Console.
  * 
  * Shows terminal console and handles user selected options.
  * 
@@ -10,6 +10,8 @@
 package com.netmind.presentation;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import com.netmind.business.StudentBlImpl;
@@ -30,8 +32,9 @@ public class StudentConsole {
 		do {
 
 			showPrincipalMenu();
+
 			input = Integer.parseInt(scanner.nextLine());
-			option = OptionEnum.getEnumFromValue(input);
+			option = OptionEnum.fromValue(input);
 
 			switch (option) {
 			case ADD_STUDENT:
@@ -49,7 +52,7 @@ public class StudentConsole {
 			default:
 				break;
 			}
-		} while (input != option.EXIT.getValue());
+		} while (input != option.EXIT.value());
 
 		scanner.close();
 	}
@@ -74,12 +77,12 @@ public class StudentConsole {
 		System.out.println("Apellido:");
 		student.setSurname(scanner.nextLine());
 
-		System.out.println("Fecha de Nacimiento: [dd-mm-yyyy]");
-		/*
-		 * try { // student.setDateOfBirth(new SimpleDateFormat("dd/MM/yyyy") //
-		 * .parse(scanner.nextLine())); } catch (ParseException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+		System.out.println("Introduce Fecha de nacimiento (dd-MM-yyyy): ");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		LocalDate dateOfBirth = LocalDate.parse(scanner.nextLine(), formatter);
+
+		student.setDateOfBirth(dateOfBirth);
+
 	}
 
 }
