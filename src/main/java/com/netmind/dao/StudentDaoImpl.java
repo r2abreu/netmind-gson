@@ -6,19 +6,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 import com.netmind.dao.contracts.StudentDao;
 import com.netmind.model.Student;
 
 public class StudentDaoImpl implements StudentDao {
 
-	private static ArrayList<Student> studentList;
 	static final Logger logger = Logger.getLogger(StudentDaoImpl.class);
+
+	private static ArrayList<Student> studentList = null;
+	static JSONArray studentJsonList = null;
 
 	static {
 		studentList = new ArrayList<Student>();
+		studentJsonList = new JSONArray();
 	}
 
 	@Override
@@ -37,28 +40,37 @@ public class StudentDaoImpl implements StudentDao {
 			bufferWriter.write(student.toTxtFile());
 			bufferWriter.write(System.lineSeparator());
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage() + student.toString());
 			throw e;
 		}
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addToJsonFile(Student student) {
 		logger.info("addToJsonFile method called");
 
-		Gson gson = new Gson();
-		try {
-			gson.toJson(student,
-					new FileWriter(FileManagerDao.getFileName("json")));
-		} catch (JsonIOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+		JSONObject studentDetails = new JSONObject();
+		studentDetails.put("id", student.getIdStudent());
+		studentDetails.put("name", student.getName());
+		studentDetails.put("surname", student.getSurname());
+		studentDetails.put("dateOfBirth", student.getDateOfBirth().toString());
+		studentDetails.put("age", student.getAge());
+
+		JSONObject studentJson = new JSONObject();
+		studentJson.put("student", studentDetails);
+
+		studentJsonList.add(studentJson);
+
+		try (FileWriter file = new FileWriter(
+				FileManagerDao.getFileName("json"))) {
+			file.write(studentJsonList.toString());
+			file.flush();
 		} catch (IOException e) {
-			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 }

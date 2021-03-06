@@ -22,7 +22,7 @@ import com.netmind.model.Student;
 public class StudentConsole {
 
 	@SuppressWarnings("static-access")
-	public static void selectOperation() {
+	public static void selectOperation() throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		StudentBl studentBl = new StudentBlImpl();
 		OptionEnum option;
@@ -40,12 +40,8 @@ public class StudentConsole {
 			case ADD_STUDENT:
 				Student student = new Student();
 				fillStudentProperties(student, scanner);
-				try {
-					studentBl.add(student);
-				} catch (IOException e) {
-					System.out.println(e.getMessage());
-					e.printStackTrace();
-				}
+				studentBl.add(student);
+				studentBl.addToJsonFile(student);
 				break;
 			case EXIT:
 				System.out.println("So long!");

@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
 
 import com.netmind.business.contracts.StudentBl;
 import com.netmind.dao.FileManagerDao;
@@ -16,9 +18,17 @@ import com.netmind.model.Student;
 
 public class StudentBlImpl implements StudentBl {
 
-	static final Logger logger = Logger.getLogger(StudentBlImpl.class);
+	static Logger logger = Logger.getLogger(StudentBlImpl.class);
 	static Properties prop = null;
+
 	static InputStream input = null;
+	private static ArrayList<Student> studentList = null;
+	static JSONArray studentJsonList = null;
+
+	static {
+		studentList = new ArrayList<Student>();
+		studentJsonList = new JSONArray();
+	}
 
 	static {
 		prop = new Properties();
@@ -40,11 +50,9 @@ public class StudentBlImpl implements StudentBl {
 		student.setAge(calculateAge(student.getDateOfBirth()));
 
 		FileManagerDao.createFile(prop.getProperty("TxtFilename"));
-		FileManagerDao.createFile(prop.getProperty("JsonFilename"));
 		logger.info("txt file is created");
-		logger.info("json file is created");
 
-		return studentDao.add(student);
+		return studentDao.addStudentToFile(student);
 	}
 
 	private int calculateAge(LocalDate dateOfBirth) {
@@ -54,8 +62,11 @@ public class StudentBlImpl implements StudentBl {
 
 	@Override
 	public boolean addToJsonFile(Student student) throws IOException {
+
 		StudentDao studentDao = new StudentDaoImpl();
-		String fileName = FileManagerDao.getFileName("json");
+
+		FileManagerDao.createFile(prop.getProperty("JsonFilename"));
+		logger.info("json file is created");
 
 		return studentDao.addToJsonFile(student);
 	}
