@@ -11,27 +11,31 @@ public class FileManagerDao {
 
 	private static HashMap<String, File> filesCollection = new HashMap<String, File>();
 
-	public static synchronized boolean createFile(String fileName)
-			throws IOException {
-		boolean isFileCreated = false;
+	public static void createFile(String fileName) {
 		file = new File(fileName);
 
-		if (!file.exists()) {
-			try {
-				isFileCreated = file.createNewFile();
-				filesCollection.put("txt", file);
-				filesCollection.put("json", file);
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				throw e;
+		try {
+			if (file.createNewFile()) {
+				System.out.println("File is created!");
+				if (fileName.contains(".txt")) {
+					filesCollection.put("txt", file);
+
+				} else if (fileName.contains(".json")) {
+					filesCollection.put("json", file);
+				}
+			} else {
+				System.out.println("File already exists");
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		return isFileCreated;
 	}
 
 	public static String getFileName(String extension) {
-		return filesCollection.get(extension).getName();
+		file = filesCollection.get(extension);
+
+		return file.getName();
 	}
 
 }
